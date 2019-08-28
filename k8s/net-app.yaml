@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: net-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: net-app
+  template:
+    metadata:
+      labels:
+        app: net-app
+        version: v-BUILDNUM
+    spec:
+      containers:
+      - name: net-app
+        image: ACRURL/net-app:v-BUILDNUM
+        ports:
+        - containerPort: 80
+      #imagePullSecrets:
+      #- name: acr-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: net-app
+spec:
+  type: NodePort
+  selector:
+    app: net-app
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+# 1.14+: apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: net-app
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+  - host: net-app.AKSURL
+    http:
+      paths:
+      - backend:
+          serviceName: net-app
+          servicePort: 80
+        path: /
