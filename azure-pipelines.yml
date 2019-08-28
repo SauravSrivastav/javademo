@@ -12,7 +12,7 @@ pool:
 steps:
 - task: Docker@2
   inputs:
-    containerRegistry: 'robrich-acr'
+    containerRegistry: 'acr'
     repository: 'net-app'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
